@@ -36,12 +36,42 @@ fn init() -> App {
         list_state: ListState::default().with_selected(Some(0)),
     };
 
+    let compress_menu = Menu {
+        items: vec![
+            MenuItem {
+                label: "Back".into(),
+                action: Open(Screen::Home),
+            },
+            MenuItem {
+                label: "Quit".into(),
+                action: Quit,
+            },
+        ],
+        list_state: ListState::default().with_selected(Some(0)),
+    };
+
+    let decompress_menu = Menu {
+        items: vec![
+            MenuItem {
+                label: "Back".into(),
+                action: Open(Screen::Home),
+            },
+            MenuItem {
+                label: "Quit".into(),
+                action: Quit,
+            },
+        ],
+        list_state: ListState::default().with_selected(Some(0)),
+    };
+
     let mut app = App {
         current_screen: Screen::Home,
         menus: HashMap::new(),
     };
 
     app.insert_menu(home_menu, Screen::Home);
+    app.insert_menu(compress_menu, Screen::Compress);
+    app.insert_menu(decompress_menu, Screen::Decompress);
 
     app
 }
