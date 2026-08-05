@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+mod app;
 
 use crossterm::event::{ Event, KeyCode };
 use ratatui::{
@@ -9,7 +9,7 @@ use ratatui::{
     widgets::{ Block, Borders, List, ListState },
 };
 
-use crate::Action::{ Open, Quit };
+use crate::{ Action::{ Open, Quit }, app::{ App, Screen } };
 
 fn main() -> color_eyre::Result<()> {
     color_eyre::install()?;
@@ -75,10 +75,7 @@ fn init() -> App {
         prev_screen: Screen::Home,
     };
 
-    let mut app = App {
-        current_screen: Screen::Home,
-        menus: HashMap::new(),
-    };
+    let mut app = App::new();
 
     app.insert_menu(home_menu, Screen::Home);
     app.insert_menu(compress_menu, Screen::Compress);
@@ -100,13 +97,13 @@ fn app(terminal: &mut DefaultTerminal) -> std::io::Result<()> {
                     break Ok(());
                 }
                 KeyCode::Esc => {
-                    app.current_screen = app.current_menu().prev_screen;
+                    app.back();
                 }
                 KeyCode::Enter => {
                     if let Some(index) = app.current_menu().list_state.selected() {
                         match app.current_menu().items[index].action {
                             Open(screen) => {
-                                app.current_screen = screen;
+                                app.open(screen);
                             }
                             Quit => {
                                 break Ok(());
@@ -144,29 +141,6 @@ struct Menu {
     items: Vec<MenuItem>,
     list_state: ListState,
     prev_screen: Screen,
-}
-
-struct App {
-    current_screen: Screen,
-    menus: HashMap<Screen, Menu>,
-}
-
-impl App {
-    fn current_menu(&mut self) -> &mut Menu {
-        return self.menus.get_mut(&self.current_screen).unwrap();
-    }
-
-    fn insert_menu(&mut self, menu: Menu, screen: Screen) {
-        self.menus.insert(screen, menu);
-    }
-}
-
-#[derive(Clone, Copy, Eq, Hash, PartialEq)]
-enum Screen {
-    Home,
-    Compress,
-    Decompress,
-    Inspect,
 }
 
 enum Action {
