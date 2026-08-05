@@ -6,7 +6,7 @@ use ratatui::{
     Frame,
     layout::{ Constraint, Layout },
     style::{ Color, Modifier },
-    widgets::{ Block, Borders, List, ListItem, ListState },
+    widgets::{ Block, Borders, List, ListState },
 };
 
 use crate::Action::{ Open, Quit };
@@ -29,39 +29,50 @@ fn init() -> App {
                 action: Open(Screen::Decompress),
             },
             MenuItem {
+                label: "Inspect".into(),
+                action: Open(Screen::Inspect),
+            },
+            MenuItem {
                 label: "Quit".into(),
                 action: Quit,
             }
         ],
         list_state: ListState::default().with_selected(Some(0)),
+        prev_screen: Screen::Home,
     };
 
     let compress_menu = Menu {
         items: vec![
             MenuItem {
-                label: "Back".into(),
+                label: "Continue".into(),
                 action: Open(Screen::Home),
             },
             MenuItem {
-                label: "Quit".into(),
-                action: Quit,
+                label: "Change algorithm".into(),
+                action: Open(Screen::Home),
             },
+            MenuItem {
+                label: "Compress options".into(),
+                action: Open(Screen::Home),
+            }
         ],
         list_state: ListState::default().with_selected(Some(0)),
+        prev_screen: Screen::Home,
     };
 
     let decompress_menu = Menu {
         items: vec![
             MenuItem {
-                label: "Back".into(),
+                label: "Path".into(),
                 action: Open(Screen::Home),
             },
             MenuItem {
                 label: "Quit".into(),
                 action: Quit,
-            },
+            }
         ],
         list_state: ListState::default().with_selected(Some(0)),
+        prev_screen: Screen::Home,
     };
 
     let mut app = App {
@@ -85,8 +96,11 @@ fn app(terminal: &mut DefaultTerminal) -> std::io::Result<()> {
             match key.code {
                 KeyCode::Char('j') | KeyCode::Down => app.current_menu().list_state.select_next(),
                 KeyCode::Char('k') | KeyCode::Up => app.current_menu().list_state.select_previous(),
-                KeyCode::Char('q') | KeyCode::Esc => {
+                KeyCode::Char('q') => {
                     break Ok(());
+                }
+                KeyCode::Esc => {
+                    app.current_screen = app.current_menu().prev_screen;
                 }
                 KeyCode::Enter => {
                     if let Some(index) = app.current_menu().list_state.selected() {
@@ -129,6 +143,7 @@ struct MenuItem {
 struct Menu {
     items: Vec<MenuItem>,
     list_state: ListState,
+    prev_screen: Screen,
 }
 
 struct App {
@@ -151,6 +166,7 @@ enum Screen {
     Home,
     Compress,
     Decompress,
+    Inspect,
 }
 
 enum Action {
