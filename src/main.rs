@@ -38,7 +38,6 @@ fn init() -> App {
             }
         ],
         list_state: ListState::default().with_selected(Some(0)),
-        prev_screen: Screen::Home,
     };
 
     let compress_menu = Menu {
@@ -57,7 +56,6 @@ fn init() -> App {
             }
         ],
         list_state: ListState::default().with_selected(Some(0)),
-        prev_screen: Screen::Home,
     };
 
     let decompress_menu = Menu {
@@ -72,7 +70,6 @@ fn init() -> App {
             }
         ],
         list_state: ListState::default().with_selected(Some(0)),
-        prev_screen: Screen::Home,
     };
 
     let mut app = App::new();
@@ -140,7 +137,6 @@ struct MenuItem {
 struct Menu {
     items: Vec<MenuItem>,
     list_state: ListState,
-    prev_screen: Screen,
 }
 
 enum Action {

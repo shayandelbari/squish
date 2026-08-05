@@ -15,8 +15,13 @@ impl App {
         }
     }
 
-    pub fn back(&mut self) {
-        self.screens.pop();
+    pub fn back(&mut self) -> bool {
+        if self.screens.len() > 1 {
+            self.screens.pop();
+            true
+        } else {
+            false
+        }
     }
 
     pub fn open(&mut self, screen: Screen) {
